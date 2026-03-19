@@ -38,18 +38,22 @@ Through extensive trial and error, we discovered that the ONLY reliable way to p
 ## Assets
 
 - `assets/Wetware_Labs_Template.docx` — Clean template with header/footer, empty body
-- `assets/wetware_logo.png` — Official WETWARE wordmark (black text, transparent PNG, backwards "E")
+- `assets/wetwareArtboard 1@4x.png` — Official WETWARE wordmark (black text, transparent PNG, backwards "E")
 - `assets/Wetware_Price_Proposal.docx` — Pre-built Price Proposal template (can be used as a reference or starting point)
+- `assets/generate-seo-report.py` — SEO Audit Report generator script (python-docx, adaptable per client)
 
 ## Document Types
 
-This skill supports two document types:
+This skill supports three document types:
 
 ### 1. General Documents (Letters, SOWs, Forms, Memos, etc.)
 Use the base template (`Wetware_Labs_Template.docx`) and build content from scratch using the pattern below.
 
 ### 2. Price Proposals
 Use for client quotes, project proposals, and pricing packages. The Price Proposal follows a specific section structure — see "Price Proposal Structure" below for the full layout and code pattern.
+
+### 3. SEO Audit Reports
+Use for client SEO audits. The report generator script (`assets/generate-seo-report.py`) creates a complete audit report with the Wetware header/footer. See "SEO Audit Report Structure" below.
 
 ## How to Build a Document
 
@@ -277,11 +281,54 @@ WHITE = RGBColor(0xFF, 0xFF, 0xFF)
 LIGHT_GRAY = RGBColor(0x99, 0x99, 0x99)
 ```
 
+## SEO Audit Report Structure
+
+When the user asks to create an SEO audit report, use the generator script at `assets/generate-seo-report.py` as a reference or adapt it directly. The report follows this structure:
+
+### Section Order
+
+1. **Cover Page** — Large centered WETWARE logo, "Full Site Audit Report", client domain, generation date
+2. **Executive Summary** — 5 metrics (Site Health %, Pages Crawled, Errors, Warnings, Notices), Page Breakdown bar, Key Findings bullets
+3. **Top Issues** — Ranked list with issue description and percentage of total issues
+4. **Errors** — Each error with name, fix description, and count (large right-aligned number)
+5. **Warnings** — Same format as errors
+6. **Notices** — Same format, page break before
+7. **What Can and Can't Be Fixed on [Platform]** — Platform-specific section (e.g., Squarespace) with:
+   - Estimated maximum SEO health score on the platform
+   - **Fixable items** — each with platform-specific instructions and priority (Critical/High/Medium/Low)
+   - **Platform limitations** — each with description and business impact (shown in dark red bold)
+   - **Bottom line** — current score, achievable score on platform, achievable score on custom site, migration recommendation
+8. **Recommendations & Next Steps** — Prioritized action items (Critical → High → Medium → Long-term)
+
+### Issue Row Pattern
+
+Each error/warning/notice uses a 2-column borderless table: left cell has bold issue name + italic description, right cell has the count in 22pt bold. Thin bottom border separates rows.
+
+### Platform Limitation Pattern
+
+Fixable items use a checkmark prefix and 2-column layout (description left, priority right). Unfixable items use a stop sign prefix, single column, with a "Business impact:" line in dark red (#883333) bold.
+
+### Adapting for New Clients
+
+1. Copy `generate-seo-report.py`
+2. Replace all placeholder values (`___`) with real audit data
+3. Update the platform limitations section for the client's platform (Squarespace, Wix, v0, WordPress, custom)
+4. Update the cover page domain and date
+5. Run the script to generate .docx, then convert to PDF with: `soffice --headless --convert-to pdf --outdir /path/to/output /path/to/report.docx`
+
+### Key Differences from Other Document Types
+
+- Cover page has NO header/footer (just the large centered logo)
+- Uses 16pt section headings (not 13pt like other docs)
+- Has sub-headings at 13pt bold
+- Uses `issue_row()` helper for the error/warning/notice tables
+- Platform limitations section uses colored text (dark red for business impact)
+
 ## Important Notes
 
 - **NEVER** try to build the header/footer from scratch using docx-js or python-docx — always open the template file
 - **ALWAYS** re-inject the logo after python-docx saves (the zipfile step above)
-- The official logo file is `wetware_logo.png` in the assets folder — a WETWARE wordmark with backwards "E", black on transparent
+- The official logo file is `wetwareArtboard 1@4x.png` in the assets folder — a WETWARE wordmark with backwards "E", black on transparent
 - Business email: management@wetwareofficial.com (or kasen@wetwareofficial.com for Kasen specifically)
 - Business entity: Wetware Labs LLC
 - The user's name is Kasen Sansonetti (CEO)
